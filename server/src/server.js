@@ -25,12 +25,6 @@ io.on("connection", (socket) => {
     const { user } = JSON.parse(message); // deserialization
     newUser(user, socket, io);
   });
-  
-  socket.on("chatMessage", chatMessage => {
-    const data = JSON.parse(chatMessage);
-    
-    io.sockets.emit('chatMessageBroadcast', JSON.stringify({
-      chatMessage : {user: data.user, msg: xss(data.msg)}
 
   socket.on("canvasDraw", canvasData => {
     const data = JSON.parse(canvasData);
