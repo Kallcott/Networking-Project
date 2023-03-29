@@ -7,9 +7,8 @@
     <title>Document</title>
 
     <script>
-        
-        // The scaling error is probably due the event listeners listening to the dom instead of specific canvas.
-        // find a way to allow one event listening too look at both UI Canvas and Draw Canavs. 
+      // The scaling error is probably due the event listeners listening to the dom instead of specific canvas.
+      // find a way to allow one event listening too look at both UI Canvas and Draw Canavs.
 
       window.addEventListener("load", function () {
         const DrawCanvas = document.getElementById("DrawCanvas");
@@ -43,8 +42,6 @@
         // Curser position
         let x = 200;
         let y = 200;
-        let startX = 0;
-        let startY = 0;
 
         // Curser animation
         const minLength = 0;
@@ -63,9 +60,11 @@
         const pad = 0;
 
         // Panning - Mouse
-        var isDown = false;
-        var netPanningX = 0;
-        var netPanningY = 0;
+        //var isDown = false;
+        //var netPanningX = 0;
+        //var netPanningY = 0;
+        //let startX = 0;
+        //let startY = 0;
 
         animate();
         drawBoard();
@@ -141,86 +140,85 @@
           //   console.log(y);
 
           // Get Panning
-          if (!isDown) {
-            return;
-          }
+          // if (!isDown) {
+          //   return;
+          // }
           // We are handling this event
-          e.preventDefault();
-          e.stopPropagation();
+          // e.preventDefault();
+          // e.stopPropagation();
 
-          var dx = x - startX;
-          var dy = y - startY;
+          // var dx = x - startX;
+          // var dy = y - startY;
 
-          netPanningX += dx / 100;
-          netPanningY += dy / 100;
+          // netPanningX += dx / 100;
+          // netPanningY += dy / 100;
 
-          console.log("Net Panning: X " + netPanningX + " , Y " + netPanningY);
+          // console.log("Net Panning: X " + netPanningX + " , Y " + netPanningY);
 
-          dataImg.src = DrawCanvas.toDataURL();
+          // dataImg.src = DrawCanvas.toDataURL();
 
-          DrawCtx.save();
-          DrawCtx.clearRect(0, 0, DrawCtx.width, DrawCtx.height);
-          DrawCtx.translate(netPanningX, netPanningY);
-          UiCtx.translate(netPanningX, netPanningY);
-          DrawCtx.restore();
+          // DrawCtx.save();
+          // DrawCtx.clearRect(0, 0, DrawCtx.width, DrawCtx.height);
+          // DrawCtx.translate(netPanningX, netPanningY);
+          // UiCtx.translate(netPanningX, netPanningY);
+          // DrawCtx.restore();
 
-          DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
-        //   DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
+          // DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
+          // //   DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
 
-          drawImageToCanvas();
+          // drawImageToCanvas();
         });
 
         document.addEventListener("mousedown", function (e) {
-          switch (e.button) {
+          // switch (e.button) {
             // Right Click
-            case 0:
+            // case 0:
               DrawCtx.beginPath();
               DrawCtx.rect(x, y, baseLength, baseLength);
               DrawCtx.fillStyle = drawColor;
               DrawCtx.fill();
               console.log("fill X " + x + " Y " + y);
-              break;
+              // break;
             // Left Click
-            case 2:
-              // Set initial Coords an begin capturing Pan
+            // case 2:
+            //   // Set initial Coords an begin capturing Pan
 
-              netPanningX = 0;
-              netPanningY = 0;
+            //   netPanningX = 0;
+            //   netPanningY = 0;
 
-              startX = x;
-              startY = y;
-              console.log("startX" + startX);
-              console.log("startY" + startX);
+            //   startX = x;
+            //   startY = y;
+            //   console.log("startX" + startX);
+            //   console.log("startY" + startX);
 
-              isDown = true;
-          }
+            //   isDown = true;
+          // }
         });
 
-        document.addEventListener("mouseup", function (e) {
-          switch (e.button) {
-            // Right Click
-            case 0:
-              break;
-            // Left Click
-            case 2:
-              isDown = false;
-          }
-        });
-        
+        // document.addEventListener("mouseup", function (e) {
+        //   switch (e.button) {
+        //     // Right Click
+        //     case 0:
+        //       break;
+        //     // Left Click
+        //     case 2:
+        //       isDown = false;
+        //   }
+        // });
 
-        function drawImageToCanvas() {
-          DrawCtx.save();
-          DrawCtx.setTransform(1, 0, 0, 1, 0, 0);
-          DrawCtx.clearRect(0, 0, DrawCanvas.width, DrawCanvas.height);
-          DrawCtx.restore();
+        // function drawImageToCanvas() {
+        //  DrawCtx.save();
+        //  DrawCtx.setTransform(1, 0, 0, 1, 0, 0);
+        //  DrawCtx.clearRect(0, 0, DrawCanvas.width, DrawCanvas.height);
+        //  DrawCtx.restore();
 
-          UiCtx.save();
-          UiCtx.setTransform(1, 0, 0, 1, 0, 0);
-          UiCtx.clearRect(0, 0, UiCtx.width, UiCtx.height);
-          UiCtx.restore();
+          //UiCtx.save();
+          //UiCtx.setTransform(1, 0, 0, 1, 0, 0);
+          //UiCtx.clearRect(0, 0, UiCtx.width, UiCtx.height);
+          //UiCtx.restore();
 
-          DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
-        }
+          //DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
+        //} -->
 
         // document.addEventListener("scroll", function (e) {
         //   const currentTransformedCursor = getTransformedPoint(event.offsetX, event.offsetY);
@@ -255,6 +253,5 @@
       <canvas id="UiCanvas" style="cursor: none; position: absolute" width="400" height="400"></canvas>
     </div>
     <input type="color" id="colorPicker" colorpick-eyedropper-active="true" />
-    
   </body>
 </html>
