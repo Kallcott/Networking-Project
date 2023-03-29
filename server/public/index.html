@@ -79,9 +79,17 @@
         </div>
         <div id="c2" class="col col75">
           <div>
-            <canvas id="canvas" style="width: 75%; height: 75%;"></canvas>
+            <canvas id="canvas" style="width: 75%; height: 75%"></canvas>
           </div>
           <div id="chatcontainer"></div>
+
+          <div id="canvasContain" style="position: relative; width: 1500px; height: 1000px; margin-bottom: 100px">
+            <canvas id="DrawCanvas" style="background-color: silver; cursor: none; position: absolute" width="1520" height="800"></canvas>
+            <canvas id="UiCanvas" style="cursor: none; position: absolute" width="1520" height="800"></canvas>
+          </div>
+          <div style="position: fixed; bottom: 10px; right: 10px">
+            <input type="color" id="colorPicker" colorpick-eyedropper-active="true" style="width: 100px; height: 100px" />
+          </div>
           <input type="text" name="" id="txtChat" />
           <button id="btnSend">Send</button>
         </div>
@@ -89,4 +97,5 @@
       <div><button id="btnLeave">Leave</button></div>
     </div>
   </body>
+
 </html>
