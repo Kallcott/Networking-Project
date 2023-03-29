@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script>
+        
+        // The scaling error is probably due the event listeners listening to the dom instead of specific canvas.
+        // find a way to allow one event listening too look at both UI Canvas and Draw Canavs. 
+
+      window.addEventListener("load", function () {
+        const DrawCanvas = document.getElementById("DrawCanvas");
+        const UICanvas = document.getElementById("UiCanvas");
+        const DrawCtx = DrawCanvas.getContext("2d");
+        const UiCtx = UICanvas.getContext("2d");
+
+        // Storage for Canvas Content
+        let dataImg = new Image();
+
+        // Get Color
+        const colorPicker = document.getElementById("colorPicker");
+
+        let drawColor = colorPicker.nodeValue;
+
+        colorPicker.addEventListener("input", (event) => {
+          drawColor = colorPicker.value;
+        });
+
+        // Draw
+
+        // disable context menu on left click
+        UICanvas.oncontextmenu = function () {
+          return false;
+        };
+
+        let userColor = "orange";
+
+        const baseLength = 40;
+
+        // Curser position
+        let x = 200;
+        let y = 200;
+        let startX = 0;
+        let startY = 0;
+
+        // Curser animation
+        const minLength = 0;
+        const maxLength = 2;
+        let p = 0;
+
+        let change = 0.02;
+        let fps = 30;
+
+        // Grid
+        // Box width
+        var bw = DrawCanvas.width;
+        // Box height
+        var bh = DrawCanvas.height;
+        // Padding
+        const pad = 0;
+
+        // Panning - Mouse
+        var isDown = false;
+        var netPanningX = 0;
+        var netPanningY = 0;
+
+        animate();
+        drawBoard();
+
+        function animate() {
+          p += change;
+          if (p > 1 || p < 0) {
+            change *= -1;
+          }
+          const growth = minLength + maxLength * p;
+          UiCtx.clearRect(0, 0, UICanvas.width, UICanvas.height);
+
+          UiCtx.beginPath();
+          //   console.log("animate X " + x + " Y " + y);
+          //#region crosshair
+          //Top Left
+          UiCtx.moveTo(x + baseLength * 0.25 + growth, y + baseLength * 0.0 + growth);
+          UiCtx.lineTo(x + baseLength * 0.0 + growth, y + baseLength * 0.0 + growth);
+          UiCtx.lineTo(x + baseLength * 0.0 + growth, y + baseLength * 0.25 + growth);
+
+          //Top Right
+          UiCtx.moveTo(x + baseLength * 0.75 + growth, y + baseLength * 0.0 + growth);
+          UiCtx.lineTo(x + baseLength * 1.0 + growth, y + baseLength * 0.0 + growth);
+          UiCtx.lineTo(x + baseLength * 1.0 + growth, y + baseLength * 0.25 + growth);
+
+          //Bot Left
+          UiCtx.moveTo(x + baseLength * 0.0 + growth, y + baseLength * 0.75 + growth);
+          UiCtx.lineTo(x + baseLength * 0.0 + growth, y + baseLength * 1.0 + growth);
+          UiCtx.lineTo(x + baseLength * 0.25 + growth, y + baseLength * 1.0 + growth);
+
+          // Bot Right
+          UiCtx.moveTo(x + baseLength * 1.0 + growth, y + baseLength * 0.75 + growth);
+          UiCtx.lineTo(x + baseLength * 1.0 + growth, y + baseLength * 1.0 + growth);
+          UiCtx.lineTo(x + baseLength * 0.75 + growth, y + baseLength * 1.0 + growth);
+          //#endregion
+
+          UiCtx.strokeStyle = userColor;
+          UiCtx.stroke();
+
+          setTimeout(() => {
+            requestAnimationFrame(animate);
+          }, 1000 / fps);
+        }
+
+        function drawBoard() {
+          for (var x = 0; x <= bw; x += 40) {
+            DrawCtx.moveTo(0.5 + x + pad, pad);
+            DrawCtx.lineTo(0.5 + x + pad, bh + pad);
+          }
+
+          for (var x = 0; x <= bh; x += 40) {
+            DrawCtx.moveTo(pad, 0.5 + x + pad);
+            DrawCtx.lineTo(bw + pad, 0.5 + x + pad);
+          }
+          DrawCtx.strokeStyle = "black";
+          DrawCtx.stroke();
+        }
+
+        document.addEventListener("mousemove", function (e) {
+          // Get transform
+          // https://roblouie.com/article/617/transforming-mouse-coordinates-to-canvas-coordinates/
+          const transform = DrawCtx.getTransform();
+
+          // Get Coords (Snap to Grip) *
+          x = Math.floor(e.offsetX / baseLength) * baseLength;
+          y = Math.floor(e.offsetY / baseLength) * baseLength;
+
+          // Get transformed point
+          //   x = transform.a * x + transform.c * y + transform.e;
+          //   y = transform.b * x + transform.d * y + transform.f;
+
+          //   console.log(x);
+          //   console.log(y);
+
+          // Get Panning
+          if (!isDown) {
+            return;
+          }
+          // We are handling this event
+          e.preventDefault();
+          e.stopPropagation();
+
+          var dx = x - startX;
+          var dy = y - startY;
+
+          netPanningX += dx / 100;
+          netPanningY += dy / 100;
+
+          console.log("Net Panning: X " + netPanningX + " , Y " + netPanningY);
+
+          dataImg.src = DrawCanvas.toDataURL();
+
+          DrawCtx.save();
+          DrawCtx.clearRect(0, 0, DrawCtx.width, DrawCtx.height);
+          DrawCtx.translate(netPanningX, netPanningY);
+          UiCtx.translate(netPanningX, netPanningY);
+          DrawCtx.restore();
+
+          DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
+        //   DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
+
+          drawImageToCanvas();
+        });
+
+        document.addEventListener("mousedown", function (e) {
+          switch (e.button) {
+            // Right Click
+            case 0:
+              DrawCtx.beginPath();
+              DrawCtx.rect(x, y, baseLength, baseLength);
+              DrawCtx.fillStyle = drawColor;
+              DrawCtx.fill();
+              console.log("fill X " + x + " Y " + y);
+              break;
+            // Left Click
+            case 2:
+              // Set initial Coords an begin capturing Pan
+
+              netPanningX = 0;
+              netPanningY = 0;
+
+              startX = x;
+              startY = y;
+              console.log("startX" + startX);
+              console.log("startY" + startX);
+
+              isDown = true;
+          }
+        });
+
+        document.addEventListener("mouseup", function (e) {
+          switch (e.button) {
+            // Right Click
+            case 0:
+              break;
+            // Left Click
+            case 2:
+              isDown = false;
+          }
+        });
+        
+
+        function drawImageToCanvas() {
+          DrawCtx.save();
+          DrawCtx.setTransform(1, 0, 0, 1, 0, 0);
+          DrawCtx.clearRect(0, 0, DrawCanvas.width, DrawCanvas.height);
+          DrawCtx.restore();
+
+          UiCtx.save();
+          UiCtx.setTransform(1, 0, 0, 1, 0, 0);
+          UiCtx.clearRect(0, 0, UiCtx.width, UiCtx.height);
+          UiCtx.restore();
+
+          DrawCtx.drawImage(dataImg, 0, 0, 200, 200);
+        }
+
+        // document.addEventListener("scroll", function (e) {
+        //   const currentTransformedCursor = getTransformedPoint(event.offsetX, event.offsetY);
+
+        //   const zoom = event.deltaY < 0 ? 1.1 : 0.9;
+
+        //   DrawCtx.translate(currentTransformedCursor.x, currentTransformedCursor.y);
+        //   DrawCtx.scale(zoom, zoom);
+        //   DrawCtx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y);
+
+        //   UiCtx.translate(currentTransformedCursor.x, currentTransformedCursor.y);
+        //   UiCtx.scale(zoom, zoom);
+        //   UiCtx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y);
+
+        //   // Redraws the image after the scaling
+        //   //   drawImageToCanvas();
+
+        //   // Stops the whole page from scrolling
+        //   event.preventDefault();
+        // });
+
+        // function getTransformedPoint(x, y) {
+        //   const originalPoint = new DOMPoint(x, y);
+        //   return DrawCtx.getTransform().invertSelf().transformPoint(originalPoint);
+        // }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="canvasContain" style="position: relative; width: 400px; height: 400px">
+      <canvas id="DrawCanvas" style="background-color: silver; cursor: none; position: absolute" width="400" height="400"></canvas>
+      <canvas id="UiCanvas" style="cursor: none; position: absolute" width="400" height="400"></canvas>
+    </div>
+    <input type="color" id="colorPicker" colorpick-eyedropper-active="true" />
+    
+  </body>
+</html>
