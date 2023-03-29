@@ -29,10 +29,6 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", chatMessage => {
     const data = JSON.parse(chatMessage);
     
-// not secure    
-    // io.sockets.emit('chatMessageBroadcast', JSON.stringify({
-    //   chatMessage: data
-    // }))
     io.sockets.emit('chatMessageBroadcast', JSON.stringify({
       chatMessage : {user: data.user, msg: xss(data.msg)}
     }))
