@@ -27,10 +27,10 @@ frm.addEventListener("submit", (e) => {
   socket.on('broadcastCanvasValue', msg => {
     const { canvasValue } = JSON.parse(msg);
     const img = new Image();
-    img.src = canvasValue;
-    
+    img.src = canvasValue.msg;
+
     DrawCanvas.drawImage(img, 0, 0);
-    });
+  });
 
   socket.emit("userJoin", JSON.stringify({ user: txtUser.value }));
 
