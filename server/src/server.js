@@ -31,12 +31,18 @@ io.on("connection", (socket) => {
     
     io.sockets.emit('chatMessageBroadcast', JSON.stringify({
       chatMessage : {user: data.user, msg: xss(data.msg)}
+
+  socket.on("canvasDraw", canvasData => {
+    const data = JSON.parse(canvasData);
+
+    io.sockets.emit('broadcastCanvasValues', JSON.stringify({
+      chatMessage: { user: data.user, msg: xss(data.msg) }
     }))
   })
 
-  socket.on('disconnect', ()=>{
-    users = users.filter(u=>u.id !== socket.id)
-    
+  socket.on('disconnect', () => {
+    users = users.filter(u => u.id !== socket.id)
+
     io.sockets.emit('userDisconnect', JSON.stringify({
       id: socket.id
     }))
