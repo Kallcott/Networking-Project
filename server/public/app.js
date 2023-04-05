@@ -51,19 +51,15 @@ frm.addEventListener("submit", (e) => {
   const DrawCanvas = document.getElementById("DrawCanvas");
 
   socket.on("broadcastCanvasValue", (msg) => {
-    console.log("return msg" + msg);
+    // console.log("return msg" + msg);
     const data = JSON.parse(msg);
-    console.log("Data: " + data.chatMessage.msg);
+    // console.log("Data: " + data.chatMessage.msg);
     const img = new Image();
+    img.onload = function () {
+      console.log("canvas type: " + img);
+      DrawCanvas.getContext("2d").drawImage(img, 0, 0);
+    };
     img.src = data.chatMessage.msg;
-
-    // console.log("image src: " + img.src);
-    
-    console.log("canvas type: " + JSON.stringify(DrawCanvas))
-
-    DrawCanvas.getContext("2d").drawImage(img, 0, 0);
-
-    console.log();
   });
 });
 
