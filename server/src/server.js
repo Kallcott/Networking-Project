@@ -13,6 +13,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 let users = [];
+let canvas = "";
 
 // Handles client connections
 io.on("connection", (socket) => {
@@ -29,10 +30,10 @@ io.on("connection", (socket) => {
   socket.on("canvasDraw", canvasData => {
     console.log("Canvas Drew")
     const data = JSON.parse(xss(canvasData));
-
+    canvas = xss(data.msg);
     // console.log("value " + xss(data.msg));
     io.sockets.emit('broadcastCanvasValue', JSON.stringify({
-      chatMessage: { user: data.user, msg: xss(data.msg) }
+      chatMessage: { user: data.user, msg: xss(canvas) }
     }))
   })
 
@@ -50,6 +51,9 @@ const newUser = (user, socket, io) => {
   socket.emit("userJoined", "You are now joined");
 
   io.sockets.emit("userList", JSON.stringify({ user, users }));
+  io.sockets.emit('broadcastCanvasValue', JSON.stringify({
+    chatMessage: { user: user, msg: xss(canvas) }
+  }))
 };
 
 server.listen(PORT, () => {
