@@ -27,9 +27,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("canvasDraw", canvasData => {
-    const data = JSON.parse(canvasData);
+    console.log("Canvas Drew")
+    const data = JSON.parse(xss(canvasData));
 
-    io.sockets.emit('broadcastCanvasValues', JSON.stringify({
+    // console.log("value " + xss(data.msg));
+    io.sockets.emit('broadcastCanvasValue', JSON.stringify({
       chatMessage: { user: data.user, msg: xss(data.msg) }
     }))
   })

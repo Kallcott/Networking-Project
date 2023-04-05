@@ -24,14 +24,6 @@ frm.addEventListener("submit", (e) => {
 
   socket = io(); // cpnnect to socket
 
-  socket.on('broadcastCanvasValue', msg => {
-    const { canvasValue } = JSON.parse(msg);
-    const img = new Image();
-    img.src = canvasValue.msg;
-
-    DrawCanvas.drawImage(img, 0, 0);
-  });
-
   socket.emit("userJoin", JSON.stringify({ user: txtUser.value }));
 
   socket.on("userJoined", (userJoined) => {
@@ -54,6 +46,21 @@ frm.addEventListener("submit", (e) => {
 
     loadUsers(userList);
     userLeft(leavingUser.user);
+  });
+  
+  const DrawCanvas = document.getElementById("DrawCanvas");
+  
+  socket.on("broadcastCanvasValue", (msg) => {
+    console.log("return msg" + msg);
+    const data = JSON.parse(msg);
+    const img = new Image();
+    img.src = data.msg;
+
+    console.log("image src: " + img.src);
+
+    DrawCanvas.drawImage(img, 0, 0);
+
+    console.log();
   });
 });
 
@@ -222,13 +229,11 @@ window.addEventListener("load", function () {
     console.log("fill X " + x + " Y " + y);
 
     let msg = DrawCanvas.toDataURL();
-    console.log(msg);
-    socket.emit(
-      "canvasDraw",
-      JSON.stringify({
-        user: txtUser.value.trim(),
-        msg,
-      })
-    );
+    // console.log(msg);
+
+    socket.emit("canvasDraw", JSON.stringify({ user: txtUser.value.trim(), msg }));
   });
+
+  // let socket = {};
+  // socket = io(); // cpnnect to socket
 });
