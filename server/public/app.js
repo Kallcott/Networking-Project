@@ -89,7 +89,7 @@ frm.addEventListener("submit", (e) => {
     return false;
   };
 
-  let userColor = "orange";
+  let userColor = "pink";
 
   const baseLength = 40;
 
@@ -181,6 +181,17 @@ frm.addEventListener("submit", (e) => {
   });
 
   document.addEventListener("mousedown", function (e) {
+
+    rect = DrawCanvas.getBoundingClientRect()
+    left = rect.left;
+    right = rect.right;
+    bot = rect.bottom;
+    // top = bot - rect.height
+    absX = e.clientX;
+    absY = e.clientY;
+    
+    if(absX >= left && absX <= right && absY >= rect.top && absY <= bot){
+
     DrawCtx.beginPath();
     DrawCtx.rect(x, y, baseLength, baseLength);
     DrawCtx.fillStyle = drawColor;
@@ -191,6 +202,7 @@ frm.addEventListener("submit", (e) => {
     // console.log(msg);
 
     socket.emit("canvasDraw", JSON.stringify({ user: txtUser.value.trim(), msg }));
+    }
   });
 });
 
