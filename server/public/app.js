@@ -89,7 +89,7 @@ frm.addEventListener("submit", (e) => {
     return false;
   };
 
-  let userColor = "pink";
+  let userColor = "orange";
 
   const baseLength = 40;
 
@@ -124,7 +124,9 @@ frm.addEventListener("submit", (e) => {
     const growth = minLength + maxLength * p;
     UiCtx.clearRect(0, 0, UICanvas.width, UICanvas.height);
 
+
     UiCtx.beginPath();
+    UiCtx.lineWidth = 6;
     //   console.log("animate X " + x + " Y " + y);
     //#region crosshair
     //Top Left
