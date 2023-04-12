@@ -70,25 +70,24 @@
       <form id="frm">User: <input type="text" id="txtUser" placeholder="User name" /><button>Go</button></form>
     </div>
     <div id="chat" class="hide">
-      <h1 class="center">Chat</h1>
+      <h1 class="center">Draw</h1>
       <div class="container">
         <div id="c1" class="col col25">
           User List
 
           <div id="userList" class="stack"></div>
         </div>
-        <div id="c2" class="col col75">
+        <div class="col col30">
           <div id="chatcontainer"></div>
-
-          <div id="canvasContain" style="position: relative; width: 1500px; height: 1000px; margin-bottom: 100px">
-            <canvas id="DrawCanvas" style="background-color: silver; cursor: none; position: absolute" width="1520" height="800"></canvas>
-            <canvas id="UiCanvas" style="cursor: none; position: absolute" width="1520" height="800"></canvas>
+        </div>
+        <div id="c2" class="col col75">
+          <div id="canvasContain" style="position: relative; width: 1081px; height: 601px; margin-bottom: 100px">
+            <canvas id="DrawCanvas" style="background-color: silver; cursor: none; position: absolute" width="1081" height="601"></canvas>
+            <canvas id="UiCanvas" style="cursor: none; position: absolute" width="1081" height="601"></canvas>
           </div>
           <div style="position: fixed; bottom: 10px; right: 10px">
             <input type="color" id="colorPicker" colorpick-eyedropper-active="true" style="width: 100px; height: 100px" />
           </div>
-          <input type="text" name="" id="txtChat" />
-          <button id="btnSend">Send</button>
         </div>
       </div>
       <div><button id="btnLeave">Leave</button></div>

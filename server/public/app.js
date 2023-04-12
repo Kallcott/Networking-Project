@@ -14,6 +14,8 @@ const btnLeave = q("#btnLeave");
 const btnSend = q("#btnSend");
 const txtChat = q("#txtChat");
 const chatcontainer = q("#chatcontainer");
+const drawCanvas = q("#DrawCanvas");
+const uiCanvas = q("UiCanvas");
 
 //#endregion
 let socket = {};
@@ -30,6 +32,8 @@ frm.addEventListener("submit", (e) => {
     console.log("User Joined");
     userDiv.classList.toggle("hide");
     chatDiv.classList.toggle("hide");
+    drawCanvas.removeAttribute('disabled');
+    uiCanvas.removeAttribute('disabled');
   });
 
   socket.on("userList", (usersList) => {
@@ -61,51 +65,7 @@ frm.addEventListener("submit", (e) => {
     };
     img.src = data.chatMessage.msg;
   });
-});
 
-const userLeft = (user) => {
-  chatcontainer.innerHTML += `<div>${user} has left chat at ${new Date()} </div>`;
-};
-
-const userJoin = (user) => {
-  chatcontainer.innerHTML += `<div>${user} has joined chat at ${new Date()}</div>`;
-};
-
-const loadUsers = (users) => {
-  usersList.innerHTML = ``;
-  userList = users;
-
-  for (const u of users) {
-    usersList.innerHTML += `<span>${u.user}</span>`;
-  }
-};
-
-btnLeave.onclick = (e) => {
-  userDiv.classList.toggle("hide");
-  chatDiv.classList.toggle("hide");
-  txtUser.value = "";
-  txtChat.value = "";
-  socket.disconnect();
-};
-
-// btnSend.onclick = (e) => {
-//   const msg = txtChat.value;
-//   txtChat.value = "";
-
-//   socket.emit(
-//     "chatMessage",
-//     JSON.stringify({
-//       user: txtUser.value.trim(),
-//       msg,
-//     })
-//   );
-// };
-
-// The scaling error is probably due the event listeners listening to the dom instead of specific canvas.
-// find a way to allow one event listening too look at both UI Canvas and Draw Canavs.
-
-window.addEventListener("load", function () {
-  const DrawCanvas = document.getElementById("DrawCanvas");
   const UICanvas = document.getElementById("UiCanvas");
   const DrawCtx = DrawCanvas.getContext("2d");
   const UiCtx = UICanvas.getContext("2d");
@@ -153,8 +113,8 @@ window.addEventListener("load", function () {
   // Padding
   const pad = 0;
 
-  animate();
   drawBoard();
+  animate()
 
   function animate() {
     p += change;
@@ -232,6 +192,51 @@ window.addEventListener("load", function () {
 
     socket.emit("canvasDraw", JSON.stringify({ user: txtUser.value.trim(), msg }));
   });
+});
+
+const userLeft = (user) => {
+  chatcontainer.innerHTML += `<div>${user} has left chat at ${new Date()} </div>`;
+};
+
+const userJoin = (user) => {
+  chatcontainer.innerHTML += `<div>${user} has joined chat at ${new Date()}</div>`;
+};
+
+const loadUsers = (users) => {
+  usersList.innerHTML = ``;
+  userList = users;
+
+  for (const u of users) {
+    usersList.innerHTML += `<span>${u.user}</span>`;
+  }
+};
+
+btnLeave.onclick = (e) => {
+  userDiv.classList.toggle("hide");
+  chatDiv.classList.toggle("hide");
+  txtUser.value = "";
+  txtChat.value = "";
+  socket.disconnect();
+};
+
+// btnSend.onclick = (e) => {
+//   const msg = txtChat.value;
+//   txtChat.value = "";
+
+//   socket.emit(
+//     "chatMessage",
+//     JSON.stringify({
+//       user: txtUser.value.trim(),
+//       msg,
+//     })
+//   );
+// };
+
+// The scaling error is probably due the event listeners listening to the dom instead of specific canvas.
+// find a way to allow one event listening too look at both UI Canvas and Draw Canavs.
+
+window.addEventListener("load", function () {
+  
 
   // let socket = {};
   // socket = io(); // cpnnect to socket
